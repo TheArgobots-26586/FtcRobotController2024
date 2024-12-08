@@ -62,6 +62,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
+/* NOTE: This has to be updated to reflect out configuration */
+
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
 
@@ -71,7 +73,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
     @Override
     public void runOpMode() {
 
