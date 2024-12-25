@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 /* Code to test servos. */
 
-@TeleOp(name="Basic: Servo Linear OpMode", group="Linear OpMode")
+@TeleOp(name="Servo Test", group="Linear OpMode")
 public class ServoTest extends LinearOpMode {
     private Servo wrist_servo = null;
     private CRServo intake_servo = null;
