@@ -38,6 +38,9 @@ public class ServoTest extends LinearOpMode {
             else if (gamepad1.dpad_down) {
                 intake_servo.setPower(0.0);
             }
+            else if (gamepad1.dpad_left) {
+                intake_servo.setPower(-1.0);
+            }
             telemetry.update();
         }
     }
