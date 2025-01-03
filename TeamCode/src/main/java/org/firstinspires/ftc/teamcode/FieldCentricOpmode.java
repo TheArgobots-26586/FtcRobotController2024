@@ -29,10 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -64,8 +68,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* NOTE: This has to be updated to reflect out configuration */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+@TeleOp(name="Field Centric Linear Opmode", group="Linear OpMode")
+public class FieldCentricOpmode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -78,10 +82,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "LeftFront");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "LeftBack");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "RightFront");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "RightBack");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -99,10 +103,22 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        telemetry.addLine("Robot Ready.");
+        telemetry.update();
+
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+// Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+// Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
 
         waitForStart();
+
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
@@ -110,16 +126,33 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double y   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double x =  gamepad1.left_stick_x;
+            double rx     =  gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+
+
+
+            if (gamepad1.options) {
+                imu.resetYaw();
+            }
+
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+
+            // Rotate the movement direction counter to the bot's rotation
+            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+            rotX = rotX * 1.1;  // Counteract imperfect strafing
+// Combine the joystick requests for each axis-motion to determine each wheel's power.
+// Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontPower  = rotY + rotX + rx;
+            double rightFrontPower = rotY - rotX - rx;
+            double leftBackPower   = rotY - rotX + rx;
+            double rightBackPower  = rotY + rotX - rx;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
