@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.drive.ArmLift;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -29,7 +30,7 @@ public class FollowerPIDTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        ArmLift armLift = new ArmLift(hardwareMap);
         Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
 
         drive.setPoseEstimate(startPose);
@@ -49,7 +50,10 @@ public class FollowerPIDTuner extends LinearOpMode {
                     .forward(DISTANCE)
                     .turn(Math.toRadians(90))
                     .build();
-            drive.followTrajectorySequence(trajSeq);
+            if(gamepad1.a) {
+                drive.followTrajectorySequence(trajSeq);
+            }
+            armLift.liftArm(telemetry);
         }
     }
 }

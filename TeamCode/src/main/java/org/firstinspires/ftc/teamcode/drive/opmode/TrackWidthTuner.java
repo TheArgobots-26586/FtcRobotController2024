@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.drive.ArmLift;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -33,7 +34,7 @@ public class TrackWidthTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        ArmLift armLift = new ArmLift(hardwareMap);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         // TODO: if you haven't already, set the localizer to something that doesn't depend on
         // drive encoders for computing the heading
@@ -51,27 +52,33 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry.update();
 
         MovingStatistics trackWidthStats = new MovingStatistics(NUM_TRIALS);
-        for (int i = 0; i < NUM_TRIALS; i++) {
-            drive.setPoseEstimate(new Pose2d());
+        while(!isStopRequested()) {
+            if(gamepad1.a) {
+                for (int i = 0; i < NUM_TRIALS; i++) {
 
-            // it is important to handle heading wraparounds
-            double headingAccumulator = 0;
-            double lastHeading = 0;
+                    drive.setPoseEstimate(new Pose2d());
 
-            drive.turnAsync(Math.toRadians(ANGLE));
+                    // it is important to handle heading wraparounds
+                    double headingAccumulator = 0;
+                    double lastHeading = 0;
 
-            while (!isStopRequested() && drive.isBusy()) {
-                double heading = drive.getPoseEstimate().getHeading();
-                headingAccumulator += Angle.normDelta(heading - lastHeading);
-                lastHeading = heading;
+                    drive.turnAsync(Math.toRadians(ANGLE));
 
-                drive.update();
+                    while (!isStopRequested() && drive.isBusy()) {
+                        double heading = drive.getPoseEstimate().getHeading();
+                        headingAccumulator += Angle.normDelta(heading - lastHeading);
+                        lastHeading = heading;
+
+                        drive.update();
+                    }
+
+                    double trackWidth = DriveConstants.TRACK_WIDTH * Math.toRadians(ANGLE) / headingAccumulator;
+                    trackWidthStats.add(trackWidth);
+
+                    sleep(DELAY);
+                }
             }
-
-            double trackWidth = DriveConstants.TRACK_WIDTH * Math.toRadians(ANGLE) / headingAccumulator;
-            trackWidthStats.add(trackWidth);
-
-            sleep(DELAY);
+            armLift.liftArm(telemetry);
         }
 
         telemetry.clearAll();

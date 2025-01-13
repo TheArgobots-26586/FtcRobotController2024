@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.ArmLift;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -93,11 +94,11 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         boolean movingForwards = true;
         MotionProfile activeProfile = generateProfile(true);
         double profileStart = clock.seconds();
-
+        ArmLift armLift = new ArmLift(hardwareMap);
 
         while (!isStopRequested()) {
+            armLift.liftArm(telemetry);
             telemetry.addData("mode", mode);
-
             switch (mode) {
                 case TUNING_MODE:
                     if (gamepad1.y) {
