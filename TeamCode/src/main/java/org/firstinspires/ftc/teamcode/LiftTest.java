@@ -11,6 +11,7 @@ public class LiftTest extends LinearOpMode {
     static final int kDeposit = 2800;
     static final int kPickup = 190;
 
+
     public void runOpMode() {
 
         liftMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
