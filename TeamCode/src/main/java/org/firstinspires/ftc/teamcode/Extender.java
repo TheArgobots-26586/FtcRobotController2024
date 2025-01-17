@@ -11,14 +11,14 @@ public class Extender {
     public Extender (HardwareMap hardwareMap)  {
         extender = hardwareMap.get(DcMotor.class, "extender");
         extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extender.setTargetPosition(0);
+        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public boolean extend() {
         ((DcMotorEx) extender).setVelocity(500.0);
         extender.setTargetPosition(extended_ticks);
         ((DcMotorEx) extender).setTargetPositionTolerance(25);
-        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (Math.abs(extender.getCurrentPosition() - extended_ticks) < 50) {
             return true;
         }
@@ -28,7 +28,6 @@ public class Extender {
         ((DcMotorEx) extender).setVelocity(500.0);
         extender.setTargetPosition(retracted_ticks);
         ((DcMotorEx) extender).setTargetPositionTolerance(25);
-        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (Math.abs(extender.getCurrentPosition() - retracted_ticks) < 50) {
             return true;
         }

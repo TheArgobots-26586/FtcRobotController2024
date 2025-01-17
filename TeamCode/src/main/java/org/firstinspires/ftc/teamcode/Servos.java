@@ -27,9 +27,15 @@ public class Servos {
         intake.setPower(1.0);
     }
 
-    public void wristOut() {
-        wrist.setPosition(1.0);
+    public void intakeOff() {
+        intake.setPower(0.0);
+    }
 
+    public void wristOut() {
+        wrist.setPosition(0.5);
+    }
+    public void wristIn() {
+        wrist.setPosition(0.0);
     }
 
 

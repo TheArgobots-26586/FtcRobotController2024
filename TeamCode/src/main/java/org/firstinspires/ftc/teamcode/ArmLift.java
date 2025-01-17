@@ -16,7 +16,8 @@ public class ArmLift {
     public ArmLift (HardwareMap hardwareMap)  {
         lift = hardwareMap.get(DcMotor.class, "ArmMotor");
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setTargetPosition(lift.getCurrentPosition());
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public boolean checkTarget(int target) {
@@ -30,15 +31,13 @@ public class ArmLift {
         int target = (int)(Math.toRadians(25) * ARM_TICKS_PER_RADIAN);
         ((DcMotorEx) lift).setVelocity(1000.0);
         lift.setTargetPosition(target);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return checkTarget(target);
     }
 
     public boolean raise() {
         ((DcMotorEx) lift).setVelocity(1000.0);
-        int target = (int)(Math.toRadians(100) * ARM_TICKS_PER_RADIAN);
+        int target = (int)(Math.toRadians(105) * ARM_TICKS_PER_RADIAN);
         lift.setTargetPosition(target);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return checkTarget(target);
     }
 
@@ -46,11 +45,14 @@ public class ArmLift {
         ((DcMotorEx) lift).setVelocity(1000.0);
         int target = 0;
         lift.setTargetPosition(target);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return checkTarget(target);
     }
+    public boolean hook() {
+        ((DcMotorEx) lift).setVelocity(1000.0);
+        int target = (int)(Math.toRadians(60) * ARM_TICKS_PER_RADIAN);
+        lift.setTargetPosition(target);
+        return checkTarget(target);
 
-
-
+    }
 
 }
