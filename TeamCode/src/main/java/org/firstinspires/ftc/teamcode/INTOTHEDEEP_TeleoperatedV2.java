@@ -105,10 +105,12 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
     final double ARM_COLLAPSED_INTO_ROBOT  = 0;
     final double ARM_COLLECT               = 0 * ARM_TICKS_PER_DEGREE;
     final double ARM_CLEAR_BARRIER         = 25 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SPECIMEN        = 90 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SPECIMEN        = 45 * ARM_TICKS_PER_DEGREE;
+    final double ARM_LOWER_SPECIMEN        = 75 * ARM_TICKS_PER_DEGREE;
     final double ARM_SCORE_SAMPLE_IN_LOW   = 105 * ARM_TICKS_PER_DEGREE;
     final double ARM_ATTACH_HANGING_HOOK   = 110 * ARM_TICKS_PER_DEGREE;
     final double ARM_WINCH_ROBOT           = 10  * ARM_TICKS_PER_DEGREE;
+    final double ARM_LOW_SPECIMEN_HANG = 45 * ARM_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
     final double INTAKE_COLLECT    = -1.0;
@@ -326,10 +328,14 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
                 intake.setPower(INTAKE_OFF);
                 wrist.setPosition(WRIST_FOLDED_IN);
             }
-
             else if (gamepad1.dpad_right) {
                 armPosition = ARM_SCORE_SPECIMEN;
-                wrist.setPosition(WRIST_FOLDED_IN);
+                intake.setPower(INTAKE_COLLECT);
+                //wrist.setPosition(WRIST_FOLDED_IN);
+            }
+            else if(gamepad1.b) {
+                armPosition = ARM_LOWER_SPECIMEN;
+
             }
             else if (gamepad1.a){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */

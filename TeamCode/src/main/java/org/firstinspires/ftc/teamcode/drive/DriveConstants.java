@@ -65,13 +65,13 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 30;
+    public static double MAX_VEL = 33;//30
     //30
-    public static double MAX_ACCEL = 30;
+    public static double MAX_ACCEL = 33;//30
     //30
-    public static double MAX_ANG_VEL = Math.toRadians(232.869);
+    public static double MAX_ANG_VEL = Math.toRadians(255.869);//232
     //180
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+    public static double MAX_ANG_ACCEL = Math.toRadians(180);//180
     //238.45335272727277
 
     /*

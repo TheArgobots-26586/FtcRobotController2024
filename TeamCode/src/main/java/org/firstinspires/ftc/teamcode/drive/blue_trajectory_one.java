@@ -91,78 +91,127 @@ public class blue_trajectory_one extends LinearOpMode {
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
                 .addTemporalMarker(() -> wrist.setPosition(WRIST_FOLDED_OUT))
-                .forward(12)
-                .lineToSplineHeading(new Pose2d(-48, 48, Math.toRadians(135)))
+                .lineToSplineHeading(new Pose2d(-50, 48, Math.toRadians(135)))
                 .addTemporalMarker(() -> {
                     armMotor.setTargetPosition((int) ARM_SCORE_SAMPLE_IN_LOW);
                     ((DcMotorEx) armMotor).setVelocity(2100);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(1)
-                .forward(11)
-                .waitSeconds(1)
+                .forward(8)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() ->{
                     liftMotor.setTargetPosition((int)(LIFT_SCORING_IN_HIGH_BASKET));
-                    ((DcMotorEx) liftMotor).setVelocity(1000);
+                    ((DcMotorEx) liftMotor).setVelocity(2100);
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(1)
                 .addTemporalMarker(() -> wrist.setPosition(WRIST_FOLDED_OUT))
-                .waitSeconds(1)
+                .waitSeconds(1.5)
                 .addTemporalMarker(() -> intake.setPower(INTAKE_DEPOSIT))
-                .waitSeconds(1)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() ->{
                     liftMotor.setTargetPosition((int)(LIFT_COLLAPSED));
-                    ((DcMotorEx) liftMotor).setVelocity(1000);
+                    ((DcMotorEx) liftMotor).setVelocity(2100);
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(2)
+                .waitSeconds(0.5)
+                .back(5)
                 .addTemporalMarker(() -> {
                     armMotor.setTargetPosition((int) ARM_CLEAR_BARRIER);
-                    ((DcMotorEx) armMotor).setVelocity(1000);
+                    ((DcMotorEx) armMotor).setVelocity(2100);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(-23.5, 35, Math.toRadians(90)))
+                .waitSeconds(0.5)
+                .lineToSplineHeading(new Pose2d(-20.5, 35, Math.toRadians(90)))
                 .addTemporalMarker(() -> {
                     armMotor.setTargetPosition((int) ARM_COLLECT);
                     ((DcMotorEx) armMotor).setVelocity(2100);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(1)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> intake.setPower(INTAKE_COLLECT))
                 .forward(4)
-                .waitSeconds(1)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     armMotor.setTargetPosition((int) ARM_CLEAR_BARRIER);
                     ((DcMotorEx) armMotor).setVelocity(2100);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .lineToSplineHeading(new Pose2d(-48, 48, Math.toRadians(135)))
+                .lineToSplineHeading(new Pose2d(-50, 48, Math.toRadians(135)))
                 .addTemporalMarker(() -> {
                     armMotor.setTargetPosition((int) ARM_SCORE_SAMPLE_IN_LOW);
                     ((DcMotorEx) armMotor).setVelocity(2100);
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(1)
-                .forward(11)
-                .waitSeconds(1)
+                .waitSeconds(0.5)
+                .forward(8)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() ->{
                     liftMotor.setTargetPosition((int)(LIFT_SCORING_IN_HIGH_BASKET));
-                    ((DcMotorEx) liftMotor).setVelocity(1000);
+                    ((DcMotorEx) liftMotor).setVelocity(2100);
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(1)
                 .addTemporalMarker(() -> wrist.setPosition(WRIST_FOLDED_OUT))
-                .waitSeconds(1)
+                .waitSeconds(1.5)
                 .addTemporalMarker(() -> intake.setPower(INTAKE_DEPOSIT))
-                .waitSeconds(1)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() ->{
                     liftMotor.setTargetPosition((int)(LIFT_COLLAPSED));
-                    ((DcMotorEx) liftMotor).setVelocity(1000);
+                    ((DcMotorEx) liftMotor).setVelocity(2100);
                     liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 })
-                .waitSeconds(2)
+                .waitSeconds(0.5)
+                .back(5)
+                .addTemporalMarker(() -> {
+                    armMotor.setTargetPosition((int) ARM_CLEAR_BARRIER);
+                    ((DcMotorEx) armMotor).setVelocity(2100);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .lineToSplineHeading(new Pose2d(-20, 45, Math.toRadians(90)))
+                .addTemporalMarker(() -> {
+                    armMotor.setTargetPosition((int) ARM_COLLECT);
+                    ((DcMotorEx) armMotor).setVelocity(2100);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> intake.setPower(INTAKE_COLLECT))
+                .forward(4)
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    armMotor.setTargetPosition((int) ARM_CLEAR_BARRIER);
+                    ((DcMotorEx) armMotor).setVelocity(2100);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                })
+                .lineToSplineHeading(new Pose2d(-50, 48, Math.toRadians(135)))
+                .addTemporalMarker(() -> {
+                    armMotor.setTargetPosition((int) ARM_SCORE_SAMPLE_IN_LOW);
+                    ((DcMotorEx) armMotor).setVelocity(2100);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .forward(8)
+                .waitSeconds(0.5)
+                .addTemporalMarker(() ->{
+                    liftMotor.setTargetPosition((int)(LIFT_SCORING_IN_HIGH_BASKET));
+                    ((DcMotorEx) liftMotor).setVelocity(2100);
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                })
+                .addTemporalMarker(() -> wrist.setPosition(WRIST_FOLDED_OUT))
+                .waitSeconds(1.5)
+                .addTemporalMarker(() -> intake.setPower(INTAKE_DEPOSIT))
+                .waitSeconds(0.5)
+                .addTemporalMarker(() ->{
+                    liftMotor.setTargetPosition((int)(LIFT_COLLAPSED));
+                    ((DcMotorEx) liftMotor).setVelocity(2100);
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                })
+                .waitSeconds(0.5)
+                .back(5)
+                .addTemporalMarker(() -> {
+                    armMotor.setTargetPosition((int) ARM_CLEAR_BARRIER);
+                    ((DcMotorEx) armMotor).setVelocity(2100);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                })
                 .build();
 
         runtime.reset();
