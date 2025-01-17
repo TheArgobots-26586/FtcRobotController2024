@@ -1,30 +1,5 @@
-/*   MIT License
- *   Copyright (c) [2024] [Base 10 Assets, LLC]
- *
- *   Permission is hereby granted, free of charge, to any person obtaining a copy
- *   of this software and associated documentation files (the "Software"), to deal
- *   in the Software without restriction, including without limitation the rights
- *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *   copies of the Software, and to permit persons to whom the Software is
- *   furnished to do so, subject to the following conditions:
-
- *   The above copyright notice and this permission notice shall be included in all
- *   copies or substantial portions of the Software.
-
- *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *   SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode;
-
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -37,33 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-/*
- * This is (mostly) the OpMode used in the goBILDA Robot in 3 Days for the 24-25 Into The Deep FTC Season.
- * https://youtube.com/playlist?list=PLpytbFEB5mLcWxf6rOHqbmYjDi9BbK00p&si=NyQLwyIkcZvZEirP (playlist of videos)
- * I've gone through and added comments for clarity. But most of the code remains the same.
- * This is very much based on the code for the Starter Kit Robot for the 24-25 season. Those resources can be found here:
- * https://www.gobilda.com/ftc-starter-bot-resource-guide-into-the-deep/
- *
- * There are three main additions to the starter kit bot code, mecanum drive, a linear slide for reaching
- * into the submersible, and a linear slide to hang (which we didn't end up using)
- *
- * the drive system is all 5203-2402-0019 (312 RPM Yellow Jacket Motors) and it is based on a Strafer chassis
- * The arm shoulder takes the design from the starter kit robot. So it uses the same 117rpm motor with an
- * external 5:1 reduction
- *
- * The drivetrain is set up as "field centric" with the internal control hub IMU. This means
- * when you push the stick forward, regardless of robot orientation, the robot drives away from you.
- * We "took inspiration" (copy-pasted) the drive code from this GM0 page
- * (PS GM0 is a world class resource, if you've got 5 mins and nothing to do, read some GM0!)
- * https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
- *
- */
-
-
-@TeleOp(name="INTO THE DEEP TeleoperatedV2", group="Robot")
-
-//@Disabled
-public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
+@TeleOp(name="INTO THE DEEP Teleoperated FINAL", group="Robot")
+public class INTOTHEDEEP_Teleoperated_FINAL extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor  leftFrontDrive   = null; //the left drivetrain motor
@@ -142,20 +92,10 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
     double oldtime = 0;
 
     double armLiftComp = 0;
-    double autoHeading = PoseStorage.currentPose.getHeading();
+
 
     @Override
     public void runOpMode() {
-        /*
-        These variables are private to the OpMode, and are used to control the drivetrain.
-         */
-        double left;
-        double right;
-        double forward;
-        double rotate;
-        double max;
-
-
         /* Define and Initialize Motors */
         leftFrontDrive  = hardwareMap.dcMotor.get("LeftFront");
         leftBackDrive   = hardwareMap.dcMotor.get("LeftBack");
@@ -218,9 +158,14 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-        int count = 0;
+        double headingOffset = 0;
+        if(PoseStorage.localizer != null) {
+            headingOffset = PoseStorage.localizer.getPoseEstimate().getHeading();
+        }
+
         /* Wait for the game driver to press play */
         waitForStart();
         wrist.setPosition(WRIST_FOLDED_OUT);
@@ -230,7 +175,6 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
             double y = -gamepad1.left_stick_y/(1.5);
             double x = gamepad1.left_stick_x/(1.5);
             double rx = gamepad1.right_stick_x/(1.5);
-            //reduceInput();
 
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
@@ -245,8 +189,8 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
             double rotY;
             if(ROBOT_OR_FIELD_CENTRIC == 1) {
                 // Rotate the movement direction counter to the bot's rotation
-                rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-                rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+                rotX = x * Math.cos(-botHeading - headingOffset) - y * Math.sin(-botHeading - headingOffset);
+                rotY = x * Math.sin(-botHeading - headingOffset) + y * Math.cos(-botHeading - headingOffset);
                 rotX = rotX * 1.1;
             }
             else {
@@ -271,19 +215,6 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
             rightBackDrive.setPower(backRightPower);
 
 
-            /* Here we handle the three buttons that have direct control of the intake speed.
-            These control the continuous rotation servo that pulls elements into the robot,
-            If the user presses A, it sets the intake power to the final variable that
-            holds the speed we want to collect at.
-            If the user presses X, it sets the servo to Off.
-            And if the user presses B it reveres the servo to spit out the element.*/
-
-            /* TECH TIP: If Else statement:
-            We're using an else if statement on "gamepad1.x" and "gamepad1.b" just in case
-            multiple buttons are pressed at the same time. If the driver presses both "a" and "x"
-            at the same time. "a" will win over and the intake will turn on. If we just had
-            three if statements, then it will set the intake servo's power to multiple speeds in
-            one cycle. Which can cause strange behavior. */
             if (gamepad2.x) {
                 intake.setPower(INTAKE_OFF);
             }
@@ -313,7 +244,6 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
             if(gamepad2.a){
                 /* This is the intaking/collecting arm position */
                 armPosition = ARM_COLLECT;
-                //liftPosition = LIFT_COLLAPSED;
                 wrist.setPosition(WRIST_FOLDED_OUT);
                 intake.setPower(INTAKE_COLLECT);
             }
@@ -321,25 +251,10 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
                 /* This is the correct height to score the sample in the HIGH BASKET */
                 armPosition = ARM_SCORE_SAMPLE_IN_LOW;
                 wrist.setPosition(WRIST_FOLDED_OUT);
-                //liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
             }
             else if(gamepad2.dpad_up) {
                 armPosition = ARM_CLEAR_BARRIER;
                 intake.setPower(INTAKE_COLLECT);
-            }
-            else if (gamepad2.dpad_left) {
-                armPosition = ARM_CLEAR_BARRIER;
-                intake.setPower(INTAKE_OFF);
-                wrist.setPosition(WRIST_FOLDED_IN);
-            }
-            else if (gamepad1.dpad_right) {
-                armPosition = ARM_SCORE_SPECIMEN;
-                intake.setPower(INTAKE_COLLECT);
-                //wrist.setPosition(WRIST_FOLDED_IN);
-            }
-            else if(gamepad1.b) {
-                armPosition = ARM_LOWER_SPECIMEN;
-
             }
             else if (gamepad1.a){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
@@ -355,20 +270,6 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
                 wrist.setPosition(WRIST_FOLDED_IN);
             }
 
-            /*
-            This is probably my favorite piece of code on this robot. It's a clever little software
-            solution to a problem the robot has.
-            This robot has an extending lift on the end of an arm shoulder. That arm shoulder should
-            run to a specific angle, and stop there to collect from the field. And the angle that
-            the shoulder should stop at changes based on how long the arm is (how far the lift is extended)
-            so here, we add a compensation factor based on how far the lift is extended.
-            That comp factor is multiplied by the number of mm the lift is extended, which
-            results in the number of degrees we need to fudge our arm up by to keep the end of the arm
-            the same distance from the field.
-            Now we don't need this to happen when the arm is up and in scoring position. So if the arm
-            is above 45°, then we just set armLiftComp to 0. It's only if it's below 45° that we set it
-            to a value.
-             */
 
             if (armPosition < 45 * ARM_TICKS_PER_DEGREE){
                 armLiftComp = (0.25568 * liftPosition);
@@ -377,10 +278,6 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
                 armLiftComp = 0;
             }
 
-           /* Here we set the target position of our arm to match the variable that was selected
-            by the driver. We add the armPosition Variable to our armPositionFudgeFactor, before adding
-            our armLiftComp, which adjusts the arm height for different lift extensions.
-            We also set the target velocity (speed) the motor runs at, and use setMode to run it.*/
 
             armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor + armLiftComp));
             if(armPosition == ARM_COLLECT) {
@@ -480,10 +377,5 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
             telemetry.update();
 
         }
-    }
-    public void reduceInput() {
-        //x/=(1.5);
-        //y/=(1.5);
-        //rx/=(1.5);
     }
 }

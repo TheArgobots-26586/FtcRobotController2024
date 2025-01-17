@@ -8,6 +8,8 @@ import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 import java.util.Arrays;
@@ -75,11 +77,13 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         int leftPos = leftEncoder.getCurrentPosition();
         int rightPos = rightEncoder.getCurrentPosition();
         int frontPos = frontEncoder.getCurrentPosition();
+        PoseStorage.currentPose = getPoseEstimate();
 
         lastEncPositions.clear();
         lastEncPositions.add(leftPos);
         lastEncPositions.add(rightPos);
         lastEncPositions.add(frontPos);
+
 
         return Arrays.asList(
                 encoderTicksToInches(leftPos) * X_MULTIPLIER,

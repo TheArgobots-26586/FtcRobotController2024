@@ -60,10 +60,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
  */
 
 
-@TeleOp(name="INTO THE DEEP TeleoperatedV2", group="Robot")
+@TeleOp(name="INTO THE DEEP TeleoperatedV3", group="Robot")
 
 //@Disabled
-public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
+public class INTOTHEDEEP_TeleoperatedV3 extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor  leftFrontDrive   = null; //the left drivetrain motor
@@ -142,7 +142,7 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
     double oldtime = 0;
 
     double armLiftComp = 0;
-    double autoHeading = PoseStorage.currentPose.getHeading();
+
 
     @Override
     public void runOpMode() {
@@ -220,7 +220,13 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-        int count = 0;
+        double headingOffset = 0;
+        if(PoseStorage.localizer != null) {
+            headingOffset = PoseStorage.localizer.getPoseEstimate().getHeading();
+        }
+        telemetry.addData("HEADING OFFSET", headingOffset);
+        telemetry.addData("CURRENT POSE", PoseStorage.currentPose.getHeading());
+        telemetry.update();
         /* Wait for the game driver to press play */
         waitForStart();
         wrist.setPosition(WRIST_FOLDED_OUT);
@@ -245,8 +251,8 @@ public class INTOTHEDEEP_TeleoperatedV2 extends LinearOpMode {
             double rotY;
             if(ROBOT_OR_FIELD_CENTRIC == 1) {
                 // Rotate the movement direction counter to the bot's rotation
-                rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-                rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+                rotX = x * Math.cos(-botHeading - headingOffset) - y * Math.sin(-botHeading - headingOffset);
+                rotY = x * Math.sin(-botHeading - headingOffset) + y * Math.cos(-botHeading - headingOffset);
                 rotX = rotX * 1.1;
             }
             else {
